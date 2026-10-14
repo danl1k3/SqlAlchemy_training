@@ -1,8 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert
 
-engine = create_engine('sqlite:///mydatabase.db', echo=True)
-
-meta = MetaData()
+# --- Tables Definition ---
 
 people = Table(
         "people",
@@ -12,8 +10,13 @@ people = Table(
         Column('age', Integer)
 )
 
-meta.create_all(engine)
 
+# --- Tables END ---
+
+engine = create_engine(sqlite:///mydatabase.db, echo=True)
+meta = MetaData()
+
+meta.create_all(engine)
 conn = engine.connect()
 
 def print_db(db_name: str):
@@ -40,11 +43,19 @@ for row in result.fetchall():
     print(row)
 '''
 
-
+'''
+UPDATE
 update_statement = people.update().where(people.c.name == 'Jane', people.c.id == 2).values(age=50)
 result = conn.execute(update_statement)
+'''
+
+'''
+DELETING
+delete_statement = people.delete().where(people.c.name == 'Jane', people.c.id == 2)
+result = conn.execute(delete_statement)
+'''
 
 conn.commit()
 
-print_db(people)
+
 
