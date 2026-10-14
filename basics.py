@@ -1,19 +1,50 @@
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, insert
 
 engine = create_engine('sqlite:///mydatabase.db', echo=True)
 
+meta = MetaData()
+
+people = Table(
+        "people",
+        meta, 
+        Column('id', Integer, primary_key=True),
+        Column('name', String, nullable=False),
+        Column('age', Integer)
+)
+
+meta.create_all(engine)
+
 conn = engine.connect()
 
-conn.execute(text("CREATE TABLE IF NOT EXISTS people (name str, age int)"))
+def print_db(db_name: str):
+    select_statement = db_name.select()
+    result = conn.execute(select_statement)
+    for row in result.fetchall():
+        print(row)
+'''
+# inserting 1 | needed import insert
+insert_statement = insert(people).values(name='Jane', age=40)
+
+# insert 2 
+insert_state = people.insert().values(name='Mike', age=30)
+
+result = conn.execute(insert_statement)
+'''
+
+'''
+SELECTIONS
+select_statement = people.select().where(people.c.age > 20)
+result = conn.execute(select_statement)
+
+for row in result.fetchall():
+    print(row)
+'''
+
+
+update_statement = people.update().where(people.c.name == 'Jane', people.c.id == 2).values(age=50)
+result = conn.execute(update_statement)
 
 conn.commit()
 
-from sqlalchemy.orm import Session
-
-session = Session(engine)
-
-session.execute(text('INSERT INTO people (name, age) VALUES ("Mike", 30);'))
-
-session.commit()
-
+print_db(people)
 
